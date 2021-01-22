@@ -93,6 +93,7 @@ export IAUFHRS=${IAUFHRS:-"6"}
 
 # Dependent Scripts and Executables
 GSIEXEC=${GSIEXEC:-$HOMEgfs/exec/global_gsi.x}
+SPLITBUFREXEC=${SPLITBUFREXEC:-$HOMEgfs/exec/splitbufr.x}
 export NTHREADS_CALCINC=${NTHREADS_CALCINC:-1}
 export APRUN_CALCINC=${APRUN_CALCINC:-${APRUN:-""}}
 export APRUN_CALCANL=${APRUN_CALCANL:-${APRUN:-""}}
@@ -478,7 +479,14 @@ $NLN $RTMFIX/CloudCoeff.bin                ./crtm_coeffs/CloudCoeff.bin
 # Observational data
 $NLN $PREPQC           prepbufr
 $NLN $PREPQCPF         prepbufr_profl
-$NLN $SATWND           satwndbufr
+
+if [ -s $SATWND ]; then
+    $SPLITBUFREXEC $SATWND
+    rm NC00502*
+    rm NC005032
+    cat NC005044 NC005045 NC005046 NC005064 NC005065 NC005066 NC005070 NC005071 NC005080 NC005091 NC005030 NC005031 NC005034 NC005039 NC005072 > ./satwndbufr
+fi
+
 $NLN $OSCATBF          oscatbufr
 $NLN $RAPIDSCATBF      rapidscatbufr
 $NLN $GSNDBF           gsndrbufr

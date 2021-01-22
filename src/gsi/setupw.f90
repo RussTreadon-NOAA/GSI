@@ -288,6 +288,7 @@ subroutine setupw(obsLL,odiagLL,lunin,mype,bwork,awork,nele,nobs,is,conv_diagsav
   integer(i_kind) ibb,ikk,ihil
 
   integer(i_kind) num_bad_ikx
+  integer(i_kind) ktype,ltype
 
   character(8) station_id
   character(8),allocatable,dimension(:):: cdiagbuf
@@ -305,6 +306,7 @@ subroutine setupw(obsLL,odiagLL,lunin,mype,bwork,awork,nele,nobs,is,conv_diagsav
   logical lowlevelsat,duplogic
   logical msonetob
   logical proceed
+  logical amvk,amvl
 
   logical:: l_pbl_pseudo_itype
   integer(i_kind):: ich0
@@ -417,18 +419,36 @@ subroutine setupw(obsLL,odiagLL,lunin,mype,bwork,awork,nele,nobs,is,conv_diagsav
   hr_offset=min_offset/60.0_r_kind
   dup=one
   do k=1,nobs
+     ktype = ictype(nint(data(ikxx,k)))
+     amvk = ktype>=240 .and. ktype<=260
      do l=k+1,nobs
+        ltype = ictype(nint(data(ikxx,l)))
+        amvl = ltype>=240 .and. ltype<=260
         if (twodvar_regional) then
            duplogic=data(ilat,k) == data(ilat,l) .and.  &
            data(ilon,k) == data(ilon,l) .and.  &
            data(ier,k) < r1000 .and. data(ier,l) < r1000 .and. &
            muse(k) .and. muse(l)
+
+!          Add observation type to duplicate check criteria.
+!!         duplogic = duplogic .and. ktype==ltype
+
+!          Limit observation type check to AMVs, not other obs types
+!!         if (amvk .and. amvl) duplogic = duplogic .and. ktype==ltype
+
          else
            duplogic=data(ilat,k) == data(ilat,l) .and.  &
            data(ilon,k) == data(ilon,l) .and.  &
            data(ipres,k) == data(ipres,l) .and. &
            data(ier,k) < r1000 .and. data(ier,l) < r1000 .and. &
            muse(k) .and. muse(l)
+
+!          Add observation type to duplicate check criteria.
+!!         duplogic = duplogic .and. ktype==ltype
+
+!          Limit observation type check to AMVs, not other obs types
+!!         if (amvk .and. amvl) duplogic = duplogic .and. ktype==ltype
+
         end if
 
         if (duplogic) then

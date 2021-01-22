@@ -423,24 +423,23 @@ subroutine read_obs_check (lexist,filename,jsatid,dtype,minuse,nread)
           end do
           nread = nread + 1
          end do airploop
-       else if(trim(filename) == 'satwndbufr')then
+       else if (index(trim(filename),'satwndbufr') /=0) then
          lexist = .false.
          loop: do while(ireadmg(lnbufr,subset,idate2) >= 0)
 !        5 GOES-R AMVs (NC005030, NC005031, NC005032, NC005034 and NC005039)
 !        are added as the GOES-R bufr file provide do not contain other winds.
 !        May not be necessary with the operational satwnd BUFR
-            if(trim(subset) == 'NC005010' .or. trim(subset) == 'NC005011' .or.&
-               trim(subset) == 'NC005070' .or. trim(subset) == 'NC005071' .or.&
-               trim(subset) == 'NC005044' .or. trim(subset) == 'NC005045' .or.&
-               trim(subset) == 'NC005046' .or. trim(subset) == 'NC005064' .or.&
-               trim(subset) == 'NC005065' .or. trim(subset) == 'NC005066' .or.& 
-               trim(subset) == 'NC005030' .or. trim(subset) == 'NC005031' .or.& 
-               trim(subset) == 'NC005032' .or. trim(subset) == 'NC005034' .or.&
-               trim(subset) == 'NC005039' .or. &
-               trim(subset) == 'NC005090' .or. trim(subset) == 'NC005091' .or.&
-               trim(subset) == 'NC005067' .or. trim(subset) == 'NC005068' .or. trim(subset) == 'NC005069' .or.&
-               trim(subset) == 'NC005081' .or. &
-               trim(subset) == 'NC005072' ) then
+            if(trim(subset) == 'NC005010' .or. trim(subset) == 'NC005011' .or. trim(subset) == 'NC005012' .or. &
+               trim(subset) == 'NC005019' .or. &
+               trim(subset) == 'NC005024' .or. trim(subset) == 'NC005025' .or. trim(subset) == 'NC005026' .or. &
+               trim(subset) == 'NC005030' .or. trim(subset) == 'NC005031' .or. trim(subset) == 'NC005032' .or. &
+               trim(subset) == 'NC005034' .or. trim(subset) == 'NC005039' .or. &
+               trim(subset) == 'NC005044' .or. trim(subset) == 'NC005045' .or. trim(subset) == 'NC005046' .or. &
+               trim(subset) == 'NC005064' .or. trim(subset) == 'NC005065' .or. trim(subset) == 'NC005066' .or. &
+               trim(subset) == 'NC005067' .or. trim(subset) == 'NC005068' .or. trim(subset) == 'NC005069' .or. &
+               trim(subset) == 'NC005070' .or. trim(subset) == 'NC005071' .or. trim(subset) == 'NC005072' .or. &
+               trim(subset) == 'NC005080' .or. trim(subset) == 'NC005081' .or. &
+               trim(subset) == 'NC005090' .or. trim(subset) == 'NC005091') then
                lexist = .true.
                exit loop
             endif

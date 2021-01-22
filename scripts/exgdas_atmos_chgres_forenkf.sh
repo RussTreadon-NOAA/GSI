@@ -60,6 +60,10 @@ export CHGRESNCEXEC=${CHGRESNCEXEC:-$HOMEgfs/exec/enkf_chgres_recenter_nc.x}
 export NTHREADS_CHGRES=${NTHREADS_CHGRES:-1}
 APRUNCFP=${APRUNCFP:-""}
 
+# Uncompress options
+UNCOMPRESS_ATMF=${UNCOMPRESS_ATMF:-"NO"}
+NCCOPY=${NCCOPY:-$NETCDF/bin/nccopy}
+
 # OPS flags
 RUN=${RUN:-""}
 SENDECF=${SENDECF:-"NO"}
@@ -88,6 +92,8 @@ ATMF07ENS=${ATMF07ENS:-${COMOUT}/${APREFIX}atmf007.ensres${ASUFFIX}}
 ATMF08ENS=${ATMF08ENS:-${COMOUT}/${APREFIX}atmf008.ensres${ASUFFIX}}
 ATMF09ENS=${ATMF09ENS:-${COMOUT}/${APREFIX}atmf009.ensres${ASUFFIX}}
 ATMFCST_ENSRES=${ATMFCST_ENSRES:-${COMOUT_ENS}/mem001/${APREFIX}atmf006${ASUFFIX}}
+# uncompressed ATMF06
+ATMF06_UNCOMPRESS=${ATMF06_UNCOMPRESS:-${COMOUT}/${APREFIX}atmf006${ASUFFIX}.uncompress}
 
 # Set script / GSI control parameters
 DOHYBVAR=${DOHYBVAR:-"NO"}
@@ -170,6 +176,12 @@ EOF
           if [ ${CFP_MP:-"NO"} = "YES" ]; then
               nm=$((nm+1))
           fi
+	  if [ $UNCOMPRESS_ATMF = "YES" -a $FHR -eq 6 ]; then
+	       echo "$nm $NCCOPY -F none -d 0 -d 0 $ATMF06 $ATMF06_UNCOMPRESS" | tee -a $DATA/mp_chgres.sh
+	       if [ ${CFP_MP:-"NO"} = "YES" ]; then
+		   nm=$((nm+1))
+               fi
+	  fi
      else
 
          export pgm=$CHGRESNCEXEC
@@ -180,6 +192,14 @@ EOF
 	 export ERR=$rc
 	 export err=$ERR
 	 $ERRSCRIPT || exit 1
+
+          if [ $UNCOMPRESS_ATMF = "YES" -a $FHR -eq 6 ]; then
+              $NCCOPY -F none -d 0 $ATMF06 $ATMF06_UNCOMPRESS
+	      rc=$?
+              export ERR=$rc
+              export err=$ERR
+              $ERRSCRIPT || exit 1
+	  fi
      fi
    done
 
