@@ -1,4 +1,5 @@
 #!/bin/sh
+set -x
 # It is now possible to run all regression tests (except RTMA) using the hybrid ensemble option with
 # internally generated random ensemble perturbations.  No script changes are required.
 #  To run with hybrid ensemble option on, change HYBENS_GLOBAL and/or HYBENS_REGIONAL from "false" to "true".
@@ -30,8 +31,13 @@ else
 fi
 
 # Determine the machine
-if [[ -d /scratch1 ]]; then # Hera
-  export machine="Hera"
+if [[ -d /scratch3 ]]; then # Hera or Ursa
+  mount=$(findmnt -n -o SOURCE /home)
+  if [[ ${mount} =~ "ursa" ]]; then
+    export machine="Ursa"
+  else
+    export machine="Hera"
+  fi
 elif [[ -d /mnt/lfs4 || -d /jetmon || -d /mnt/lfs5 ]]; then # Jet
   export machine="Jet"
 elif [[ -d /discover ]]; then # NCCS Discover
@@ -154,6 +160,40 @@ case $machine in
     #  After completion of regression tests, will remove the regression test subdirecories
     export clean=".false."
   ;;
+  Ursa)
+
+    export local_or_default="${local_or_default:-/scratch3/NCEPDEV/da/$LOGNAME}"
+    if [ -d $local_or_default ]; then
+      export noscrub="$local_or_default/noscrub"
+    elif [ -d /scratch3/NCEPDEV/global/$LOGNAME ]; then
+      export noscrub="/scratch3/NCEPDEV/global/$LOGNAME/noscrub"
+     elif [ -d /scratch4/BMC/gsienkf/$LOGNAME ]; then
+      export noscrub="/scratch4/BMC/gsienkf/$LOGNAME"
+    fi
+
+    export group="${group:-global}"
+    export queue="${queue:-batch}"
+    if [[ "$cmaketest" = "false" ]]; then
+      export basedir="/scratch3/NCEPDEV/da/$LOGNAME/git/gsi"
+    fi
+
+    export ptmp="${ptmp:-/scratch3/NCEPDEV/stmp/$LOGNAME/$ptmpName}"
+
+    export casesdir="/scratch3/NCEPDEV/da/Russ.Treadon/CASES/regtest"
+
+    export check_resource="no"
+    export accnt="${accnt:-da-cpu}"
+
+    ##TODO
+    # spack-stack/1.9.1 crtm-fix/2.4.0.1_emc does not contain the correct files
+    # use fixcrtm below until fixed
+    export fixcrtm="/scratch3/NCEPDEV/da/Russ.Treadon/fix/crtm-fix-2.4.0.1_emc/fix"
+
+    #  On Hera, there are no scrubbers to remove old contents from stmp* directories.
+    #  After completion of regression tests, will remove the regression test subdirecories
+    export clean=".false."
+  ;;
+  
   Jet)
 
     export noscrub=/lfs5/NESDIS/nesdis-rdo2/$LOGNAME/noscrub
