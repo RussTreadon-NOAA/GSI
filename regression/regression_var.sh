@@ -184,12 +184,7 @@ case $machine in
     export check_resource="no"
     export accnt="${accnt:-da-cpu}"
 
-    ##TODO
-    # spack-stack/1.9.1 crtm-fix/2.4.0.1_emc does not contain the correct files
-    # use fixcrtm below until fixed
-    export fixcrtm="/scratch3/NCEPDEV/da/Russ.Treadon/fix/crtm-fix-2.4.0.1_emc/fix"
-
-    #  On Hera, there are no scrubbers to remove old contents from stmp* directories.
+    #  On Ursa, there are no scrubbers to remove old contents from stmp* directories.
     #  After completion of regression tests, will remove the regression test subdirecories
     export clean=".false."
   ;;
