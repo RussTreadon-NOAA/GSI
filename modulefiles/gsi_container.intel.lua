@@ -23,6 +23,5 @@ setenv("CXX","mpiicpc")
 setenv("FC","mpiifort")
 setenv("F90","mpiifort")
 setenv("F77","mpiifort")
-pushenv("USE_BUFR4", "YES")
 
 whatis("Description: GSI environment in a container with Intel Compilers")
