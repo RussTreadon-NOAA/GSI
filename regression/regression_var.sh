@@ -77,13 +77,13 @@ case $machine in
   ;;
   gaeac6)
     export queue="normal"
-    export group="bil-fire8"
+    export group="ira-sti"
     export noscrub="/gpfs/f6/${group}/scratch/${USER}/${LOGNAME}/gsi_tmp/noscrub"
     export ptmp="/gpfs/f6/${group}/scratch/${USER}/${LOGNAME}/gsi_tmp/ptmp"
     export casesdir="/gpfs/f6/bil-fire8/world-shared/GSI_data/CASES/regtest"
 
     export check_resource="no"
-    export accnt="bil-fire8"
+    export accnt="ira-sti"
   ;;
   wcoss2 | acorn)
       export local_or_default="${local_or_default:-/lfs/h2/emc/da/noscrub/$LOGNAME}"
