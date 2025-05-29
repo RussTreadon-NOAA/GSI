@@ -1,5 +1,5 @@
 #!/bin/sh
-set -x
+
 # It is now possible to run all regression tests (except RTMA) using the hybrid ensemble option with
 # internally generated random ensemble perturbations.  No script changes are required.
 #  To run with hybrid ensemble option on, change HYBENS_GLOBAL and/or HYBENS_REGIONAL from "false" to "true".
@@ -67,13 +67,13 @@ echo "Running Regression Tests on '$machine'";
 case $machine in
   gaeac5)
     export queue="normal"
-    export group="ufs-ard"
+    export group="nggps_emc"
     export noscrub="/gpfs/f5/${group}/scratch/${USER}/$LOGNAME/gsi_tmp/noscrub"
     export ptmp="/gpfs/f5/${group}/scratch/${USER}/$LOGNAME/gsi_tmp/ptmp"
     export casesdir="/gpfs/f5/ufs-ard/world-shared/GSI_data/CASES/regtest"
 
     export check_resource="no"
-    export accnt="ufs-ard"
+    export accnt="nggps_emc"
   ;;
   gaeac6)
     export queue="normal"
