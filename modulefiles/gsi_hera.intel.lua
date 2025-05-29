@@ -1,7 +1,7 @@
 help([[
 ]])
 
-prepend_path("MODULEPATH", "/contrib/spack-stack/spack-stack-1.9.1/envs/ue-oneapi-2024.2.1/install/modulefiles/Core")
+prepend_path("MODULEPATH", "/contrib/spack-stack/spack-stack-1.6.0/envs/gsi-addon-dev-rocky8/install/modulefiles/Core")
 
 local python_ver=os.getenv("python_ver") or "3.11.6"
 local stack_intel_ver=os.getenv("stack_intel_ver") or "2021.5.0"
