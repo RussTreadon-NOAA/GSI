@@ -125,7 +125,7 @@ case $machine in
       if [[ "$cmaketest" = "false" ]]; then
          export basedir="/work/noaa/da/$LOGNAME/gsi"
       fi
-      export ptmp="${ptmp:-/work/noaa/stmp/$LOGNAME/$ptmpName}"
+      export ptmp="${ptmp:-/work/noaa/stmp/$LOGNAME/${machine}/$ptmpName}"
 
       export casesdir="/work/noaa/da/rtreadon/CASES/regtest"
 
