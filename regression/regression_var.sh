@@ -191,11 +191,11 @@ case $machine in
   
   Jet)
 
-    export noscrub=/lfs5/NESDIS/nesdis-rdo2/$LOGNAME/noscrub
-    export ptmp=/lfs5/NESDIS/nesdis-rdo2/$LOGNAME/ptmp
+    export noscrub=/lfs5/HFIP/emcda/$LOGNAME/noscrub
+    export ptmp=/lfs5/HFIP/emcda/$LOGNAME/ptmp
     export casesdir="/lfs5/NESDIS/nesdis-rdo2/David.Huber/save/CASES/regtest"
     export check_resource="no"
-    export accnt="nesdis-rdo2"
+    export accnt="hfv3gfs"
 
     export group="global"
     export queue="batch"
