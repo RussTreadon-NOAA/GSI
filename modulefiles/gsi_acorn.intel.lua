@@ -52,7 +52,7 @@ load(pathJoin("crtm", crtm_ver))
 
 -- bufr/12.1.0 is installed on Acorn, but no modulefile
 setenv("bufr_ROOT","/apps/ops/prod/libs/intel/19.1.3.304/bufr/12.1.0")
-setenv("bufr_VERSION","12.0.0")
+setenv("bufr_VERSION","12.1.0")
 setenv("BUFR_INC4","/apps/ops/prod/libs/intel/19.1.3.304/bufr/12.1.0/include/bufr_4")
 setenv("BUFR_LIB4","/apps/ops/prod/libs/intel/19.1.3.304/bufr/12.1.0/lib64/libbufr_4.a")
 prepend_path("PATH","/apps/ops/prod/libs/intel/19.1.3.304/bufr/12.1.0/bin")
