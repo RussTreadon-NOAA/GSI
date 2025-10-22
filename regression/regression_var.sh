@@ -20,6 +20,11 @@ if [ "$#" = 7 ] ; then
   export clean="false"
   dir_root="${builddir%/*}"
   export ptmpName="${dir_root##*/}"
+
+  export modulefiles_updat=$gsisrc/modulefiles
+  contrl="/develop/modulefiles"
+  export modulefiles_contrl=$(dirname "$gsisrc")${contrl}
+  
 else
   # Name of the branch being tested
   updat="XXXXXXXX"

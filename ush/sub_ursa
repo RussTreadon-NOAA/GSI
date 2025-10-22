@@ -138,6 +138,11 @@ echo "" >>$cfile
 echo "set +x" >> $cfile
 echo ". /apps/lmod/lmod/init/sh"                           >> $cfile
 echo "module purge"                                        >> $cfile
+if [[ $jobname == *"updat"* ]]; then
+    modulefiles=$modulefiles_updat
+elif [[ $jobname == *"contrl"* ]]; then
+    modulefiles=$modulefiles_contrl
+fi
 echo "module use $modulefiles"                      >> $cfile
 echo "module load gsi_ursa.intel" >> $cfile
 echo "module list"                                         >> $cfile
