@@ -31,15 +31,6 @@ option(ENABLE_MKL "Use MKL for LAPACK implementation (if available)" ON)
 option(USE_GSDCLOUD "Use GSD Cloud Analysis library" OFF)
 option(USE_MGBF "Use MGBF library" ON)
 
-set(GSI_VALID_MODES "GFS" "Regional")
-set(GSI_MODE "GFS" CACHE STRING "Choose the GSI Application.")
-set_property(CACHE GSI_MODE PROPERTY STRINGS ${GSI_VALID_MODES})
-
-# Ensure valid GSI_MODE is selected
-if(NOT GSI_MODE IN_LIST GSI_VALID_MODES)
-  message(FATAL_ERROR "GSI_MODE must be one of ${GSI_VALID_MODES}")
-endif()
-
 # Echo user options
 message(STATUS "GSI: OPENMP ................. ${OPENMP}")
 message(STATUS "GSI: ENABLE_MKL ............. ${ENABLE_MKL}")
@@ -74,7 +65,7 @@ find_package(ip REQUIRED)
 find_package(w3emc REQUIRED)
 find_package(bufr REQUIRED)
 find_package(crtm REQUIRED)
-if(GSI_MODE MATCHES "Regional")
+if(GSI_MODE STREQUAL "Regional" OR GSI_MODE STREQUAL "3DRTMA")
   find_package(wrf_io REQUIRED)
 endif()
 
@@ -111,7 +102,7 @@ if(GSI_MODE MATCHES "GFS") # GFS GSI application
   list(APPEND GSI_SRC_Fortran
     ${GSI_SRC_gfs_stub}
     ${GSI_SRC_fixture_gfs})
-elseif(GSI_MODE MATCHES "Regional") # Regional GSI application
+elseif(GSI_MODE STREQUAL "Regional" OR GSI_MODE STREQUAL "3DRTMA") # Regional GSI application
   list(APPEND GSI_SRC_Fortran
     ${GSI_SRC_regional_cplr}
     ${GSI_SRC_fixture_regional})
@@ -156,7 +147,7 @@ target_link_libraries(gsi_fortran_obj PUBLIC w3emc::w3emc_d)
 target_link_libraries(gsi_fortran_obj PUBLIC ip::ip_d)
 target_link_libraries(gsi_fortran_obj PUBLIC bufr::bufr_4)
 target_link_libraries(gsi_fortran_obj PUBLIC crtm::crtm)
-if(GSI_MODE MATCHES "Regional")
+if(GSI_MODE STREQUAL "Regional" OR GSI_MODE STREQUAL "3DRTMA")
   target_link_libraries(gsi_fortran_obj PUBLIC wrf_io::wrf_io)
 endif()
 target_link_libraries(gsi_fortran_obj PUBLIC ncdiag::ncdiag)

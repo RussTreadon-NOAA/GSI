@@ -34,6 +34,20 @@ option(BUILD_GSI "Build GSI" ON)
 option(BUILD_ENKF "Build EnKF" ON)
 option(BUILD_REG_TESTING "Build the Regression Testing Suite" OFF)
 
+set(GSI_VALID_MODES "GFS" "Regional" "3DRTMA")
+set(GSI_MODE "GFS" CACHE STRING "Choose the GSI Application.")
+set_property(CACHE GSI_MODE PROPERTY STRINGS ${GSI_VALID_MODES})
+
+# Ensure valid GSI_MODE is selected
+if(NOT GSI_MODE IN_LIST GSI_VALID_MODES)
+  message(FATAL_ERROR "GSI_MODE must be one of ${GSI_VALID_MODES}")
+endif()
+
+if(GSI_MODE MATCHES "3DRTMA")
+  set(BUILD_GSDCLOUD "ON")
+  set(USE_GSDCLOUD "ON")
+endif()
+
 # Echo user options
 message(STATUS "OPENMP ................. ${OPENMP}")
 message(STATUS "ENABLE_MKL ............. ${ENABLE_MKL}")
