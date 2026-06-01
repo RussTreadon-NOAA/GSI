@@ -142,8 +142,8 @@ emiscoef_VISsnow=$fixcrtm/NPOESS.VISsnow.EmisCoeff.bin
 emiscoef_VISwater=$fixcrtm/NPOESS.VISwater.EmisCoeff.bin
 emiscoef_MWwater=$fixcrtm/FASTEM6.MWwater.EmisCoeff.bin
 aercoef=$fixcrtm/AerosolCoeff.bin
-cldcoef=$fixcrtm/CloudCoeff.bin
-#cldcoef=$fixcrtm/CloudCoeff.GFDLFV3.-109z-1.bin   # use with crtm/2.4.0
+##cldcoef=$fixcrtm/CloudCoeff.bin
+cldcoef=$fixcrtm/CloudCoeff.GFDLFV3.-109z-1.bin   # use with crtm/2.4.0
 
 # Only need this file for single obs test
 bufrtable=$fixgsi/prepobs_prep.bufrtable

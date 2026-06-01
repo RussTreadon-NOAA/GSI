@@ -17,11 +17,11 @@ if(NOT CMAKE_BUILD_TYPE MATCHES "^(Debug|Release|RelWithDebInfo|MinSizeRel)$")
   set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS "Debug" "Release" "MinSizeRel" "RelWithDebInfo")
 endif()
 
-if(NOT CMAKE_C_COMPILER_ID MATCHES "^(GNU|Intel|Clang|AppleClang)$")
+if(NOT CMAKE_C_COMPILER_ID MATCHES "^(GNU|Intel|Clang|AppleClang|IntelLLVM)$")
   message(WARNING "${CMAKE_C_COMPILER_ID} is not supported.")
 endif()
 
-if(NOT CMAKE_Fortran_COMPILER_ID MATCHES "^(GNU|Intel)$")
+if(NOT CMAKE_Fortran_COMPILER_ID MATCHES "^(GNU|Intel|IntelLLVM)$")
   message(WARNING "${CMAKE_Fortran_COMPILER_ID} is not supported.")
 endif()
 
@@ -79,8 +79,13 @@ if(GSI_MODE MATCHES "Regional")
   find_package(wrf_io REQUIRED)
 endif()
 
+# spack-stack CRTM exports target "crtm" (no namespace)
+if(TARGET crtm AND NOT TARGET crtm::crtm)
+  add_library(crtm::crtm ALIAS crtm)
+endif()
+
 # See https://github.com/NOAA-EMC/NCEPLIBS-nemsio/pull/22
-target_link_libraries(nemsio::nemsio INTERFACE w3emc::w3emc_d bacio::bacio_4)
+target_link_libraries(nemsio::nemsio INTERFACE w3emc::w3emc_d bacio::bacio)
 
 # GSD Cloud Analysis library dependency
 if(USE_GSDCLOUD)
@@ -148,7 +153,7 @@ target_compile_definitions(gsi_fortran_obj PRIVATE ${GSI_Fortran_defs})
 target_link_libraries(gsi_fortran_obj PUBLIC NetCDF::NetCDF_Fortran)
 target_link_libraries(gsi_fortran_obj PUBLIC MPI::MPI_Fortran)
 target_link_libraries(gsi_fortran_obj PUBLIC ${LAPACK_LIBRARIES})
-target_link_libraries(gsi_fortran_obj PUBLIC bacio::bacio_4)
+target_link_libraries(gsi_fortran_obj PUBLIC bacio::bacio)
 target_link_libraries(gsi_fortran_obj PUBLIC sigio::sigio)
 target_link_libraries(gsi_fortran_obj PUBLIC sfcio::sfcio)
 target_link_libraries(gsi_fortran_obj PUBLIC nemsio::nemsio)

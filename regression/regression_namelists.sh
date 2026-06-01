@@ -24,7 +24,7 @@ export gsi_namelist="
    newpc4pred=.true.,adp_anglebc=.true.,angord=4,passive_bc=.true.,use_edges=.false.,
    diag_precon=.true.,step_start=1.e-3,emiss_bc=.true.,thin4d=.true.,cwoption=3,
    verbose=.false.,imp_physics=8,lupp=.true.,
-   binary_diag=.false.,netcdf_diag=.true.,
+   binary_diag=.true.,netcdf_diag=.false.,
    lobsdiag_forenkf=.false.,
    nhr_anal=3,6,9,nhr_obsbin=1,
    l4densvar=.true.,ens_nstarthr=3,nhr_assimilation=6,lwrite4danl=.true.,
