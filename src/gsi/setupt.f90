@@ -232,7 +232,9 @@ subroutine setupt(obsLL,odiagLL,lunin,mype,bwork,awork,nele,nobs,is,conv_diagsav
 !   2023-03-21 Draper added option to interpolate screen-level T from model 2m output.
 !              (hofx_2m_sfcfile)
 !   2024-10-31  zhao    - added code to use valley-map data for 3DRTMA (l_rtma3d = .TRUE.)
-!   2026-07-23  pondeca/morris - add station id match to duplogic
+!   2026-09-16  pondeca/morris - duplogic enhanced to allow for slight lat/lon differences b/w nearby
+!                                stations, add a new station id match option, and use true lat/lon
+!                                values (ilate/ilone) instead of grid-relative values (ilat/ilon)
 !
 ! !REMARKS:
 !   language: f90
@@ -479,25 +481,25 @@ subroutine setupt(obsLL,odiagLL,lunin,mype,bwork,awork,nele,nobs,is,conv_diagsav
 !  handle multiple reported data at a station
   hr_offset=min_offset/60.0_r_kind
   dup=one
-  k2_loop: do k=1,nobs
-     if (.not. muse(k)) cycle k2_loop
+  kloop: do k=1,nobs
+     if (.not. muse(k)) cycle kloop
      ikx=nint(data(ikxx,k))
      itype=ictype(ikx)
      rtmasfctype =(itype>=180 .and. itype<=195)
      landsfctype =( itype==181 .or. itype==183 .or. itype==187 )
      rstn1 = data(id,k)
-     nlen=0; do i=1,8 ; if (cstn1(i:i)==cblank) exit ; nlen=nlen+1 ; enddo !accounts for  mesonet station ids that end with
+     nlen=0; do i=1,8 ; if (cstn1(i:i)==cblank) exit ; nlen=nlen+1 ; enddo !accounts for mesonet station ids that end with
                                                                            !an "a" in the eight position preceeded by blanks
-     l_loop: do l=k+1,nobs
-        if (.not. muse(l)) cycle l_loop
+     lloop: do l=k+1,nobs
+        if (.not. muse(l)) cycle lloop
         rstn2 = data(id,l)
         nlen2=0; do i=1,8 ; if (cstn2(i:i)==cblank) exit ; nlen2=nlen2+1 ; enddo
-        duplogic_1=abs(data(ilate,k)-data(ilate,l))<epsdup .and.  &   !duplicate stations can have lat/lon specs
-        abs(data(ilone,k)-data(ilone,l))<epsdup                       !differing by as much as epsdup (~0.005 deg)
+        duplogic_1=abs(data(ilate,k)-data(ilate,l))<=epsdup .and.  &   !duplicate stations can have lat/lon specs
+        abs(data(ilone,k)-data(ilone,l))<=epsdup                       !differing by as much as epsdup (~0.005 deg)
 
-        duplogic_2=abs(data(ilate,k)-data(ilate,l))<epsdup_2 .and.  & !station can appear as TAC station and BUFR station
-        abs(data(ilone,k)-data(ilone,l))<epsdup_2 .and.  &            !with lat/lon specs differing by as much as epsdup_2 (~0.1 deg)
-        (nlen==nlen2.and.cstn1(1:nlen)==cstn2(1:nlen))              !this logic addresses this situation, but only when the station ids
+        duplogic_2=abs(data(ilate,k)-data(ilate,l))<=epsdup_2 .and.  & !station can appear as TAC station and BUFR station
+        abs(data(ilone,k)-data(ilone,l))<=epsdup_2 .and.  &            !with lat/lon specs differing by as much as epsdup_2 (~0.1 deg)
+        (nlen==nlen2.and.cstn1(1:nlen)==cstn2(1:nlen))                 !this logic addresses this situation, but only when the station ids
                                                                        !are the same. when they are different, the duplicate obs will slip in
         if (twodvar_regional .or. (l_rtma3d .and. rtmasfctype) .or. (hofx_2m_sfcfile .and. landsfctype) ) then
            duplogic=(duplogic_1.or.duplogic_2).and.&
@@ -516,7 +518,7 @@ subroutine setupt(obsLL,odiagLL,lunin,mype,bwork,awork,nele,nobs,is,conv_diagsav
                   muse(l)=.false.
               else
                   muse(k)=.false.
-                  exit l_loop
+                  exit lloop
               endif
 !              write(*,'(a,2f10.5,2I8,2L10)') 'chech obs time==',data(itime,k)-hr_offset,data(itime,l)-hr_offset,k,l,&
 !                           muse(k),muse(l)
@@ -526,8 +528,8 @@ subroutine setupt(obsLL,odiagLL,lunin,mype,bwork,awork,nele,nobs,is,conv_diagsav
               dup(l)=dup(l)+one-tfact*tfact*(one-dfact)
            endif
         end if
-     end do l_loop
-  end do k2_loop
+     end do lloop
+  end do kloop
 
 ! Run a buddy-check
 ! Note: buddy check crashes for hofx_2m_sfcfile option.

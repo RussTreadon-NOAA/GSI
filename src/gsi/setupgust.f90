@@ -45,7 +45,10 @@ subroutine setupgust(obsLL,odiagLL,lunin,mype,bwork,awork,nele,nobs,is,conv_diag
 !                                       similarity in twodvar_regional applications
 !   2022-04-16  pondeca - write bias correction multiplicative factor for mesonet
 !                         winds, windbiasfact, to diagnostic file
-!   2026-07-23  pondeca/morris - add station id match to duplogic
+!   2026-09-16  pondeca/morris - duplogic enhanced to allow for slight lat/lon differences b/w nearby
+!                                stations, add a new station id match option, and use true lat/lon
+!                                values (ilate/ilone) instead of grid-relative values (ilat/ilon)
+!
 !
 !   input argument list:
 !     lunin    - unit from which to read observations
@@ -267,23 +270,23 @@ subroutine setupgust(obsLL,odiagLL,lunin,mype,bwork,awork,nele,nobs,is,conv_diag
 ! Check for duplicate observations at same location
   hr_offset=min_offset/60.0_r_kind
   dup=one
-  k2_loop: do k=1,nobs
-     if (.not. muse(k)) cycle k2_loop
+  kloop: do k=1,nobs
+     if (.not. muse(k)) cycle kloop
      ikx=nint(data(ikxx,k))
      rstn1 = data(id,k)
-     nlen=0; do i=1,8 ; if (cstn1(i:i)==cblank) exit ; nlen=nlen+1 ; enddo !accounts for  mesonet station ids that end with
+     nlen=0; do i=1,8 ; if (cstn1(i:i)==cblank) exit ; nlen=nlen+1 ; enddo !accounts for mesonet station ids that end with
                                                                            !an "a" in the eight position preceeded by blanks
-     l_loop: do l=k+1,nobs
-        if (.not. muse(l)) cycle l_loop
+     lloop: do l=k+1,nobs
+        if (.not. muse(l)) cycle lloop
         rstn2 = data(id,l)
         nlen2=0; do i=1,8 ; if (cstn2(i:i)==cblank) exit ; nlen2=nlen2+1 ; enddo
-        duplogic_1=abs(data(ilate,k)-data(ilate,l))<epsdup .and.  &   !duplicate stations can have lat/lon specs
-        abs(data(ilone,k)-data(ilone,l))<epsdup                       !differing by as much as epsdup (~0.005 deg)
+        duplogic_1=abs(data(ilate,k)-data(ilate,l))<=epsdup .and.  &   !duplicate stations can have lat/lon specs
+        abs(data(ilone,k)-data(ilone,l))<=epsdup                       !differing by as much as epsdup (~0.005 deg)
 
-        duplogic_2=abs(data(ilate,k)-data(ilate,l))<epsdup_2 .and.  & !station can appear as TAC station and BUFR station
-        abs(data(ilone,k)-data(ilone,l))<epsdup_2 .and.  &            !with lat/lon specs differing by as much as epsdup_2 (~0.1 deg)
-        (nlen==nlen2.and.cstn1(1:nlen)==cstn2(1:nlen))              !this logic addresses this situation, but only when the station ids
-                                                                    !are the same. when they are different, the duplicate obs will slip in 
+        duplogic_2=abs(data(ilate,k)-data(ilate,l))<=epsdup_2 .and.  & !station can appear as TAC station and BUFR station
+        abs(data(ilone,k)-data(ilone,l))<=epsdup_2 .and.  &            !with lat/lon specs differing by as much as epsdup_2 (~0.1 deg)
+        (nlen==nlen2.and.cstn1(1:nlen)==cstn2(1:nlen))                 !this logic addresses this situation, but only when the station ids
+                                                                       !are the same. when they are different, the duplicate obs will slip in 
 
         duplogic=(duplogic_1.or.duplogic_2).and.&
         data(ier,k) < r1000 .and. data(ier,l) < r1000 .and. &
@@ -295,7 +298,7 @@ subroutine setupgust(obsLL,odiagLL,lunin,mype,bwork,awork,nele,nobs,is,conv_diag
                   muse(l)=.false.
               else
                   muse(k)=.false.
-                  exit l_loop
+                  exit lloop
               endif
            else
               tfact=min(one,abs(data(itime,k)-data(itime,l))/dfact1)
@@ -303,8 +306,8 @@ subroutine setupgust(obsLL,odiagLL,lunin,mype,bwork,awork,nele,nobs,is,conv_diag
               dup(l)=dup(l)+one-tfact*tfact*(one-dfact)
            endif
         end if
-     end do l_loop
-  end do k2_loop
+     end do lloop
+  end do kloop
 
 ! If requested, save select data for output to diagnostic file
   if(conv_diagsave)then
