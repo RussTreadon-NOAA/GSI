@@ -483,7 +483,7 @@ contains
     iasing_cads = .false.
 
     epsdup   = zero ! Duplicate station matching based solely on lat/lon metadata
-    epsdup_2 = zero ! Duplicate station matching based on station ID
+    epsdup_2 = zero ! Duplicate station matching requires station ID match (with looser lat/lon tolerance)
 
     return
   end subroutine init_qcvars

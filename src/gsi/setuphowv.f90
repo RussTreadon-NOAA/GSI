@@ -228,7 +228,6 @@ subroutine setuphowv(obsLL,odiagLL,lunin,mype,bwork,awork,nele,nobs,is,conv_diag
         abs(data(ilone,k)-data(ilone,l))<=epsdup_2 .and.  &            !with lat/lon specs differing by as much as epsdup_2 (~0.1 deg)
         (nlen>0 .and. nlen==nlen2 .and. adjustl(cstn1)(1:nlen)==adjustl(cstn2)(1:nlen))                 !this logic addresses this situation, but only when the station ids
                                                                        !are the same. when they are different, the duplicate obs will slip in
-                                                                       !are the same. when they are different, the duplicate obs will slip in 
 
         duplogic=(duplogic_1.or.duplogic_2).and.&
         data(ier,k) < r1000 .and. data(ier,l) < r1000 .and. &
