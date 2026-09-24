@@ -222,19 +222,19 @@ subroutine setuptcamt(obsLL,odiagLL,lunin,mype,bwork,awork,nele,nobs,is,conv_dia
      if (.not. muse(k)) cycle kloop
      ikx=nint(data(ikxx,k))
      rstn1 = data(id,k)
-     nlen=0; do i=1,8 ; if (cstn1(i:i)==cblank) exit ; nlen=nlen+1 ; enddo !accounts for mesonet station ids that end with
+     nlen = index(adjustl(cstn1), cblank) - 1; if (nlen < 1) nlen = len_trim(adjustl(cstn1)) !accounts for mesonet station ids that end with
                                                                            !an "a" in the eight position preceeded by blanks
      lloop: do l=k+1,nobs
         if (.not. muse(l)) cycle lloop
         rstn2 = data(id,l)
-        nlen2=0; do i=1,8 ; if (cstn2(i:i)==cblank) exit ; nlen2=nlen2+1 ; enddo
+        nlen2 = index(adjustl(cstn2), cblank) - 1; if (nlen2 < 1) nlen2 = len_trim(adjustl(cstn2))
         duplogic_1=abs(data(ilate,k)-data(ilate,l))<=epsdup .and.  &   !duplicate stations can have lat/lon specs
         abs(data(ilone,k)-data(ilone,l))<=epsdup                       !differing by as much as epsdup (~0.005 deg)
 
         duplogic_2=abs(data(ilate,k)-data(ilate,l))<=epsdup_2 .and.  & !station can appear as TAC station and BUFR station
         abs(data(ilone,k)-data(ilone,l))<=epsdup_2 .and.  &            !with lat/lon specs differing by as much as epsdup_2 (~0.1 deg)
-        (nlen==nlen2.and.cstn1(1:nlen)==cstn2(1:nlen))                 !this logic addresses this situation, but only when the station ids
-                                                                       !are the same. when they are different, the duplicate obs will slip in 
+        (nlen>0 .and. nlen==nlen2 .and. adjustl(cstn1)(1:nlen)==adjustl(cstn2)(1:nlen))                 !this logic addresses this situation, but only when the station ids
+                                                                       !are the same. when they are different, the duplicate obs will slip in
 
         duplogic=(duplogic_1.or.duplogic_2).and.&
         data(ier,k) < r1000 .and. data(ier,l) < r1000 .and. &
