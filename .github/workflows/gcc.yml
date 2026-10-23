@@ -51,9 +51,8 @@ jobs:
           rm -rf spack
           git clone --depth 1 https://github.com/JCSDA/spack.git spack
           export SPACK_STACK_DIR="${{ github.workspace }}/spack-stack"
-          if [ ! -d "${SPACK_STACK_DIR}/.git" ]; then
-            git clone --depth 1 https://github.com/JCSDA/spack-stack.git "${SPACK_STACK_DIR}"
-          fi
+          rm -rf "${SPACK_STACK_DIR}"
+          git clone --depth 1 https://github.com/JCSDA/spack-stack.git "${SPACK_STACK_DIR}"
           . spack/share/spack/setup-env.sh
           spack env create gsi-env gsi/ci/spack_gcc.yaml
           spack env activate gsi-env
