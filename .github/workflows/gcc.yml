@@ -41,9 +41,7 @@ jobs:
             ~/.spack
           key: spack-${{ runner.os }}-${{ env.cache_key }}-${{ hashFiles('gsi/ci/spack.yaml') }}
 
-      # Install dependencies using Spack
       - name: install-dependencies-with-spack
-        # if: steps.cache-env.outputs.cache-hit != 'true'
         run: |
           set -euxo pipefail
           sudo apt-get update

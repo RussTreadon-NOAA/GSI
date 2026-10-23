@@ -67,14 +67,17 @@ jobs:
           sudo apt-get clean
           echo "source /opt/intel/oneapi/setvars.sh" >> ~/.bash_profile
 
-      # Install dependencies using Spack
       - name: install-dependencies-with-spack
         if: steps.cache-env.outputs.cache-hit != 'true'
         run: |
-          sudo mv /usr/local/ /usr_local_mv
-          sudo apt-get install cmake
+          set -euxo pipefail
+
+          sudo mv /usr/local/ /usr_local_mv || true
+          sudo apt-get update
+          sudo apt-get install -y cmake
+
           rm -rf spack
-          git clone -c feature.manyFiles=true https://github.com/JCSDA/spack.git
+          git clone --depth 1 https://github.com/JCSDA/spack.git spack
           export SPACK_STACK_DIR="${{ github.workspace }}/spack-stack"
           rm -rf "${SPACK_STACK_DIR}"
           git clone --depth 1 https://github.com/JCSDA/spack-stack.git "${SPACK_STACK_DIR}"
