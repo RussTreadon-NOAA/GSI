@@ -75,6 +75,9 @@ jobs:
           sudo apt-get install cmake
           rm -rf spack
           git clone -c feature.manyFiles=true https://github.com/JCSDA/spack.git
+          export SPACK_STACK_DIR="${{ github.workspace }}/spack-stack"
+          rm -rf "${SPACK_STACK_DIR}"
+          git clone --depth 1 https://github.com/JCSDA/spack-stack.git "${SPACK_STACK_DIR}"
           source spack/share/spack/setup-env.sh
           spack env create gsi-env gsi/ci/spack_intel.yaml
           spack env activate gsi-env
